@@ -31,6 +31,7 @@ namespace FlashCards.Business.Services
 
             _context.Cards.Add(card);
             await _context.SaveChangesAsync();
+
             return card.ToCardDTO();
 
         }
