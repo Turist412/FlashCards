@@ -8,6 +8,6 @@ namespace FlashCards.Business.Interfaces
         Task<DeckDTO?> GetByIdAsync(Guid id);
         Task<ICollection<DeckDTO>> GetAllAsync();
         Task<bool> DeleteAsync(Guid id);
-        Task<DeckDTO> UpdateAsync(Guid id, CreateDeckDTO updateDeckDto);
+        Task<DeckDTO?> UpdateAsync(Guid id, CreateDeckDTO updateDeckDto);
     }
 }

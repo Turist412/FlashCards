@@ -2,6 +2,7 @@
 using FlashCards.Business.Interfaces;
 using FlashCards.Business.Mappers;
 using FlashCards.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlashCards.Business.Services
 {
@@ -17,33 +18,59 @@ namespace FlashCards.Business.Services
         }
         public async Task<DeckDTO> CreateAsync(CreateDeckDTO createDeckDto)
         {
-            var Deck = createDeckDto.ToEntity();
+            var deck = createDeckDto.ToEntity();
 
-            Deck.UserId = _userContext.CurrentUserId;
-            _context.Decks.Add(Deck);
+            deck.UserId = _userContext.CurrentUserId;
+            _context.Decks.Add(deck);
             await _context.SaveChangesAsync();
 
-            return Deck.ToDeckDTO();
+            return deck.ToDeckDTO();
         }
 
-        public Task<bool> DeleteAsync(Guid id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var canDelete = await _context.Decks
+                .Where(d => d.Id == id && d.UserId == _userContext.CurrentUserId)
+                .ExecuteDeleteAsync();
+
+            return canDelete > 0;
         }
 
-        public Task<ICollection<DeckDTO>> GetAllAsync()
+        public async Task<ICollection<DeckDTO>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var decks = await _context.Decks
+                .AsNoTracking()
+                .Include(d => d.Cards)
+                .Where(d => d.UserId == _userContext.CurrentUserId)
+                .ToListAsync();
+
+            return decks.Select(d => d.ToDeckDTO()).ToList();
         }
 
-        public Task<DeckDTO?> GetByIdAsync(Guid id)
+        public async Task<DeckDTO?> GetByIdAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var deck = await _context.Decks
+                .AsNoTracking()
+                .Include(d => d.Cards)
+                .FirstOrDefaultAsync(d => d.Id == id && d.UserId == _userContext.CurrentUserId);
+
+            return deck?.ToDeckDTO();
         }
 
-        public Task<DeckDTO> UpdateAsync(Guid id, CreateDeckDTO updateDeckDto)
+        public async Task<DeckDTO?> UpdateAsync(Guid id, CreateDeckDTO updateDeckDto)
         {
-            throw new NotImplementedException();
+            var deck = await _context.Decks
+                .FirstOrDefaultAsync(d => d.Id == id && d.UserId == _userContext.CurrentUserId);
+
+            if (deck == null)
+            {
+                return null;
+            }
+
+            deck.Name = updateDeckDto.Name;
+
+            await _context.SaveChangesAsync();
+            return deck.ToDeckDTO();
         }
     }
 }

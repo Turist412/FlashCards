@@ -39,11 +39,11 @@ namespace FlashCards.Business.Services
         public async Task<bool> DeleteAsync(Guid id)
         {
 
-            var affectedRows = await _context.Cards
+            var canDelete = await _context.Cards
                 .Where(c => c.UserId == _userContext.CurrentUserId && c.Id == id)
                 .ExecuteDeleteAsync();
 
-            return affectedRows > 0;
+            return canDelete > 0;
         }
 
         public async Task<CardDTO?> GetByIdAsync(Guid id)
@@ -52,11 +52,7 @@ namespace FlashCards.Business.Services
                 .AsNoTracking()
                 .FirstOrDefaultAsync(c => c.Id == id && c.UserId == _userContext.CurrentUserId);
 
-            if(card == null)
-            {
-                return null;
-            }
-            return card.ToCardDTO();
+            return card?.ToCardDTO();
         }
 
         public async Task<ICollection<CardDTO>> GetAllByDeckIdAsync(Guid deckId)
