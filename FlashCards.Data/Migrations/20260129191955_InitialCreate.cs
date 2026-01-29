@@ -16,6 +16,7 @@ namespace FlashCards.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
@@ -30,6 +31,7 @@ namespace FlashCards.Data.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     DeckId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     FrontText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     BackText = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Language = table.Column<int>(type: "int", nullable: false),

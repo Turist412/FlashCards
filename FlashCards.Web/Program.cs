@@ -1,8 +1,8 @@
 using FlashCards.Business.Interfaces;
 using FlashCards.Business.Services;
 using FlashCards.Data;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-
 
 namespace FlashCards.Web
 {
@@ -23,7 +23,23 @@ namespace FlashCards.Web
                 b => b.MigrationsAssembly("FlashCards.Data")));
 
             builder.Services.AddSingleton<IUserContext, FakeUserContext>();
+            builder.Services.AddTransient<IDeckService, DeckService>();
+            builder.Services.AddTransient<ICardService, CardService>();
+
             builder.Services.AddOpenApi();
+
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAngular", policy =>
+                {
+                    policy.WithOrigins("http://localhost:4200") // frontend URL
+                          .AllowAnyMethod()
+                          .AllowAnyHeader();
+                });
+            });
+
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
 
             var app = builder.Build();
 
@@ -35,6 +51,13 @@ namespace FlashCards.Web
 
             app.UseHttpsRedirection();
 
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI();
+            }
+
+            app.UseCors("AllowAngular");
             app.UseAuthorization();
 
 
