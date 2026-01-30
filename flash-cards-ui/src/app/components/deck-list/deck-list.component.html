@@ -1,0 +1,16 @@
+<div class="container">
+  <h2>Мои Колоды</h2>
+
+  <div class="create-form">
+    <input [(ngModel)]="newDeckName" placeholder="Название колоды">
+    <button (click)="createDeck()">Создать</button>
+  </div>
+
+  <hr>
+
+  <div *ngFor="let deck of decks" class="deck-card">
+    <h3>{{ deck.name }}</h3>
+    <p>Карточек: {{ deck.cardCount }}</p>
+    <button (click)="deleteDeck(deck.id)">Удалить</button>
+  </div>
+</div>
