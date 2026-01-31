@@ -16,11 +16,19 @@ export class DeckService {
     return this.http.get<Deck[]>(this.apiUrl);
   }
 
+  getById(deckId: string): Observable<Deck>{
+    return this.http.get<Deck>(`${this.apiUrl}/${deckId}`);
+  }
+
   create(deck: CreateDeckDto): Observable<Deck> {
     return this.http.post<Deck>(this.apiUrl, deck);
   }
 
-  delete(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  update(deckId: string, deck: CreateDeckDto): Observable<Deck> {
+    return this.http.put<Deck>(`${this.apiUrl}/${deckId}`, deck);
+  }
+
+  delete(deckId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${deckId}`);
   }
 }

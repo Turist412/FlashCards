@@ -1,13 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common'; // Важно для *ngFor
+import { CommonModule } from '@angular/common'; 
 import { DeckService } from '../../services/deck.service';
 import { Deck } from '../../models/deck.model';
-import { FormsModule } from '@angular/forms'; // Для инпута создания
+import { FormsModule } from '@angular/forms'; 
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-deck-list',
   standalone: true,
-  imports: [CommonModule, FormsModule], // <--- Импортируем модули сюда
+  imports: [CommonModule, FormsModule, RouterModule], 
   templateUrl: './deck-list.component.html',
   styleUrls: ['./deck-list.component.scss']
 })
@@ -31,15 +32,14 @@ export class DeckListComponent implements OnInit {
     if (!this.newDeckName.trim()) return;
 
     this.deckService.create({ name: this.newDeckName }).subscribe(newDeck => {
-      this.decks.push(newDeck); // Добавляем в список сразу, без перезагрузки
-      this.newDeckName = ''; // Чистим поле
+      this.decks.push(newDeck); 
+      this.newDeckName = ''; 
     });
   }
 
-  deleteDeck(id: string) {
-    this.deckService.delete(id).subscribe(() => {
-      // Удаляем из списка на экране
-      this.decks = this.decks.filter(d => d.id !== id);
+  deleteDeck(deckId: string) {
+    this.deckService.delete(deckId).subscribe(() => {
+      this.decks = this.decks.filter(d => d.id !== deckId);
     });
   }
 }

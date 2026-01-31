@@ -5,9 +5,7 @@ import { DeckListComponent } from './components/deck-list/deck-list.component';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet,
-    DeckListComponent
-  ],
+  imports: [RouterOutlet,],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

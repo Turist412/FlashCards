@@ -29,11 +29,20 @@ namespace FlashCards.Business.Services
 
         public async Task<bool> DeleteAsync(Guid id)
         {
-            var canDelete = await _context.Decks
-                .Where(d => d.Id == id && d.UserId == _userContext.CurrentUserId)
+            var deckExists = await _context.Decks
+                .AnyAsync(d => d.Id == id && d.UserId == _userContext.CurrentUserId);
+
+            if (!deckExists) return false;
+
+            await _context.Cards
+                .Where(c => c.DeckId == id)
                 .ExecuteDeleteAsync();
 
-            return canDelete > 0;
+            var deletedDecks = await _context.Decks
+                .Where(d => d.Id == id)
+                .ExecuteDeleteAsync();
+
+            return deletedDecks > 0;
         }
 
         public async Task<ICollection<DeckDTO>> GetAllAsync()

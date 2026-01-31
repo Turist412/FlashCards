@@ -1,0 +1,27 @@
+<div class="container">
+  <div class="form-container">
+    <h3>{{ editingCardId ? 'Редактирование слова' : 'Новое слово' }}</h3>
+    
+    <input [(ngModel)]="currentCard.frontText" placeholder="Слово">
+    <input [(ngModel)]="currentCard.backText" placeholder="Перевод">
+    
+    <button (click)="saveCard()">
+      {{ editingCardId ? 'Сохранить изменения' : 'Добавить' }}
+    </button>
+    
+    <button *ngIf="editingCardId" (click)="resetForm()">Отмена</button>
+  </div>
+
+  <hr>
+
+  <table>
+    <tr *ngFor="let card of cards">
+      <td>{{ card.frontText }}</td>
+      <td>{{ card.backText }}</td>
+      <td>
+        <button (click)="startEdit(card)">✏️</button> 
+        <button (click)="deleteCard(card.id)">🗑</button>
+      </td>
+    </tr>
+  </table>
+</div>
