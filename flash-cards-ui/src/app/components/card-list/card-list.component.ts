@@ -4,7 +4,7 @@ import { FormsModule, NgModel } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router'; 
 import { CardService } from '../../services/card.service';
 import { Card, CreateCardDto } from '../../models/card.model';
-import { CardLanguage } from '../../models/enums.model';
+import { CardLanguage, GrammaticalGender } from '../../models/enums.model';
 
 @Component({
   selector: 'app-card-list',
@@ -13,11 +13,18 @@ import { CardLanguage } from '../../models/enums.model';
   templateUrl: './card-list.component.html',
   styleUrl: './card-list.component.scss'
 })
-export class CardListComponent {
+export class CardListComponent implements OnInit {
   cards: Card[] = [];
   deckId: string = '';
 
   editingCardId: string | null = null;
+
+  flippedCards = new Set<string>();
+
+  isModalOpen = false;
+
+  eLanguage = CardLanguage;
+  eGender = GrammaticalGender;
 
   currentCard: CreateCardDto = {
     deckId: '',
@@ -45,26 +52,57 @@ export class CardListComponent {
     });
   }
 
+  toggleFlip(cardId: string) {
+    if (this.flippedCards.has(cardId)) {
+      this.flippedCards.delete(cardId);
+    } else {
+      this.flippedCards.add(cardId);
+    }
+  }
+
+  isFlipped(cardId: string): boolean {
+    return this.flippedCards.has(cardId);
+  }
+
+  getGenderClass(card: Card): string {
+    if (card.language !== CardLanguage.German) return 'default-card';
+    
+    switch (card.gender) {
+      case GrammaticalGender.Masculine: return 'male-card';     // Blue
+      case GrammaticalGender.Feminine: return 'female-card'; // Red
+      case GrammaticalGender.Neuter: return 'neuter-card'; // Green
+      default: return 'default-card';
+    }
+  }
+
+
   saveCard() {
     if (!this.currentCard.frontText.trim() || !this.currentCard.backText.trim()) return;
 
     if (this.editingCardId) {
       this.cardService.update(this.editingCardId, this.currentCard).subscribe(updatedCard => {
         const index = this.cards.findIndex(c => c.id === this.editingCardId);
-        if (index !== -1) {
-          this.cards[index] = updatedCard;
-        }
-        this.resetForm();
+        if (index !== -1) this.cards[index] = updatedCard;
+        this.closeModal(); 
       });
     } else {
       this.cardService.create(this.currentCard).subscribe(createdCard => {
         this.cards.push(createdCard);
-        this.resetForm();
+        this.closeModal(); 
       });
     }
   }
 
-  startEdit(card: Card) {
+
+  openCreateModal() {
+    this.resetForm(); 
+    this.isModalOpen = true;
+  }
+
+
+  startEdit(card: Card, event: Event) {
+    event.stopPropagation();
+    
     this.editingCardId = card.id;
 
     this.currentCard = {
@@ -73,13 +111,21 @@ export class CardListComponent {
       backText: card.backText,
       language: card.language,
       gender: card.gender,
-      pluralForm: card.pluralForm,
-      pronunciation: card.pronunciation,
-       
+      plural: card.plural,
+      pronunciation: card.pronunciation,       
     };
+
+    this.isModalOpen = true;
+  }
+  
+  closeModal() {
+    this.isModalOpen = false;
+    this.resetForm();
   }
 
-  deleteCard(cardId: string) {
+
+  deleteCard(cardId: string, event: Event) {
+    event.stopPropagation();
     if(confirm('Confirm delete?')) {
         this.cardService.delete(cardId).subscribe(() => {
           this.cards = this.cards.filter(c => c.id !== cardId);

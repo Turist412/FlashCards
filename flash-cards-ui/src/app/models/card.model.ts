@@ -10,7 +10,7 @@ export interface Card {
   reviewCount: number;
   language: CardLanguage; 
   gender?: GrammaticalGender;       
-  pluralForm?: string;       
+  plural?: string;       
   pronunciation?: string;
 }
 
@@ -20,6 +20,6 @@ export interface CreateCardDto {
   backText: string;
   language: CardLanguage;
   gender?: GrammaticalGender;
-  pluralForm?: string;
+  plural?: string;
   pronunciation?: string;
 }

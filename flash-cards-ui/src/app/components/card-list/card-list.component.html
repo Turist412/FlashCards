@@ -1,27 +1,91 @@
 <div class="container">
-  <div class="form-container">
-    <h3>{{ editingCardId ? 'Редактирование слова' : 'Новое слово' }}</h3>
-    
-    <input [(ngModel)]="currentCard.frontText" placeholder="Слово">
-    <input [(ngModel)]="currentCard.backText" placeholder="Перевод">
-    
-    <button (click)="saveCard()">
-      {{ editingCardId ? 'Сохранить изменения' : 'Добавить' }}
-    </button>
-    
-    <button *ngIf="editingCardId" (click)="resetForm()">Отмена</button>
+
+  <div class="header-actions">
+      <h2>Слова в колоде</h2>
+      <button class="add-btn" (click)="openCreateModal()">+ Добавить слово</button>
   </div>
 
   <hr>
 
-  <table>
-    <tr *ngFor="let card of cards">
-      <td>{{ card.frontText }}</td>
-      <td>{{ card.backText }}</td>
-      <td>
-        <button (click)="startEdit(card)">✏️</button> 
-        <button (click)="deleteCard(card.id)">🗑</button>
-      </td>
-    </tr>
-  </table>
+  <div class="cards-grid">
+    <div class="flip-card" *ngFor="let card of cards" (click)="toggleFlip(card.id)">
+      
+      <div class="flip-card-inner" [class.flipped]="isFlipped(card.id)">
+
+        <div class="flip-card-front" [ngClass]="getGenderClass(card)">
+            <div class="card-content">
+                <h2 class="main-text">{{ card.frontText }}</h2>
+                
+                <p *ngIf="card.language === eLanguage.German && card.plural" class="sub-text">
+                    (pl. {{ card.plural }})
+                </p>
+
+                <p *ngIf="card.language === eLanguage.Japanese && card.pronunciation" class="sub-text">
+                    [{{ card.pronunciation }}]
+                </p>
+            </div>
+
+            <div class="card-actions">
+                <button (click)="startEdit(card, $event)" class="icon-btn">✏️</button>
+                <button (click)="deleteCard(card.id, $event)" class="icon-btn">🗑</button>
+            </div>
+        </div>
+
+        <div class="flip-card-back" [ngClass]="getGenderClass(card)">
+            <div class="card-content">
+                <h2 class="main-text">{{ card.backText }}</h2>
+            </div>
+
+            <div class="card-actions">
+                <button (click)="startEdit(card, $event)" class="icon-btn">✏️</button>
+                <button (click)="deleteCard(card.id, $event)" class="icon-btn">🗑</button>
+            </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" *ngIf="isModalOpen" (click)="closeModal()">
+    
+    <div class="modal-window" (click)="$event.stopPropagation()">
+        
+        <div class="modal-header">
+            <h3>{{ editingCardId ? 'Редактирование' : 'Новое слово' }}</h3>
+            <span class="close-icon" (click)="closeModal()">&times;</span>
+        </div>
+
+        <div class="modal-body">
+            <label>Язык карточки:</label>
+            <select [(ngModel)]="currentCard.language">
+                <option [ngValue]="eLanguage.German">German</option>
+                <option [ngValue]="eLanguage.Japanese">Japanese</option>
+            </select>
+
+            <input [(ngModel)]="currentCard.frontText" placeholder="Слово / Фраза (Front)">
+            <input [(ngModel)]="currentCard.backText" placeholder="Перевод (Back)">
+
+            <div *ngIf="currentCard.language === eLanguage.German" class="lang-specific">
+                <label>Грамматический род:</label>
+                <select [(ngModel)]="currentCard.gender">
+                    <option [ngValue]="eGender.None">Не указан</option>
+                    <option [ngValue]="eGender.Masculine">Мужской (Der)</option>
+                    <option [ngValue]="eGender.Feminine">Женский (Die)</option>
+                    <option [ngValue]="eGender.Neuter">Средний (Das)</option>
+                </select>
+
+                <input [(ngModel)]="currentCard.plural" placeholder="Множественное число (Plural)">
+            </div>
+
+            <div *ngIf="currentCard.language === eLanguage.Japanese" class="lang-specific">
+                <input [(ngModel)]="currentCard.pronunciation" placeholder="Чтение (Kana/Romaji)">
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button (click)="closeModal()" class="cancel-btn">Отмена</button>
+            <button (click)="saveCard()" class="save-btn">Сохранить</button>
+        </div>
+    </div>
 </div>
