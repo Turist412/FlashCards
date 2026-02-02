@@ -1,19 +1,50 @@
 <div class="container">
-  <h2>Мои Колоды</h2>
-
-  <div class="create-form">
-    <input [(ngModel)]="newDeckName" placeholder="Название колоды">
-    <button (click)="createDeck()">Создать</button>
-  </div>
-
-  <hr>
-
-  <div *ngFor="let deck of decks" class="deck-card">
-    <a [routerLink]="['/decks', deck.id]" class="deck-link">
-    {{ deck.name }}
-    </a>
-    <p>Карточек: {{ deck.cardCount }}</p>
+  
+  <div class="header-section">
+    <h1>Мои Колоды</h1>
     
-    <button (click)="deleteDeck(deck.id)">Удалить</button>
+    <div class="create-bar">
+      <input 
+        [(ngModel)]="newDeckName" 
+        (keyup.enter)="createDeck()" 
+        placeholder="Название новой колоды...">
+      <button (click)="createDeck()">
+        <span class="plus-icon">+</span> Создать
+      </button>
+    </div>
   </div>
+
+  <div class="decks-grid">
+    
+    <div 
+        *ngFor="let deck of decks" 
+        class="deck-card" 
+        [routerLink]="['/decks', deck.id]">
+      
+      <div class="deck-top-stripe"></div>
+
+      <div class="deck-content">
+        <h3 class="deck-name">{{ deck.name }}</h3>
+        
+        <div class="deck-meta">
+          <span class="card-count">
+             📚 {{ deck.cardCount }} карт
+          </span>
+        </div>
+      </div>
+
+      <button 
+        class="delete-btn" 
+        (click)="$event.stopPropagation(); deleteDeck(deck.id)"
+        title="Удалить колоду">
+        🗑
+      </button>
+
+    </div>
+  </div>
+
+  <div *ngIf="decks.length === 0" class="empty-state">
+    <p>У вас пока нет ни одной колоды. Создайте первую!</p>
+  </div>
+
 </div>

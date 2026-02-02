@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router'; 
+import { ActivatedRoute, RouterLink } from '@angular/router'; 
 import { CardService } from '../../services/card.service';
 import { Card, CreateCardDto } from '../../models/card.model';
 import { CardLanguage, GrammaticalGender } from '../../models/enums.model';
@@ -9,7 +9,7 @@ import { CardLanguage, GrammaticalGender } from '../../models/enums.model';
 @Component({
   selector: 'app-card-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   templateUrl: './card-list.component.html',
   styleUrl: './card-list.component.scss'
 })
