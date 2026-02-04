@@ -10,6 +10,7 @@ namespace FlashCards.Data
         }
         public DbSet<Card> Cards { get; set; }
         public DbSet<Deck> Decks { get; set; }
+        public DbSet<DictionaryWord> DictionaryWords { get; set; }
 
         protected override void OnModelCreating(ModelBuilder mb)
         {
@@ -36,6 +37,13 @@ namespace FlashCards.Data
             mb.Entity<Deck>(entity =>
             {
                 entity.Property(e => e.Name)
+                .IsRequired()
+                .HasMaxLength(100);
+            });
+
+            mb.Entity<DictionaryWord>(entity =>
+            {
+                entity.Property(e => e.Text)
                 .IsRequired()
                 .HasMaxLength(100);
             });

@@ -8,12 +8,13 @@ namespace FlashCards.Business.DTOs
         public Guid DeckId { get; set; }
         public string FrontText { get; set; }
         public string BackText { get; set; }
-        public Language? Language { get; set; }
+        public string DisplayedBackText { get; set; } // for True/false questions
+        public CardLanguage? Language { get; set; }
         public GrammaticalGender? Gender { get; set; }
         public string? Plural { get; set; }
         public string? Pronunciation { get; set; }
         public QuestionType QuestionType { get; set; }
-        public bool CheckFrontText { get; set; } = true;
+        public bool CheckFrontText { get; set; } = true; // true: ask for BackText, false: ask for FrontText
         public ICollection<string> PossibleAnswers { get; set; } = new List<string>();
     }
 }

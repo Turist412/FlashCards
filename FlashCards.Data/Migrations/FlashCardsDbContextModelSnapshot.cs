@@ -96,6 +96,28 @@ namespace FlashCards.Data.Migrations
                     b.ToTable("Decks");
                 });
 
+            modelBuilder.Entity("FlashCards.Core.Entities.DictionaryWord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DictionaryWords");
+                });
+
             modelBuilder.Entity("FlashCards.Core.Entities.Card", b =>
                 {
                     b.HasOne("FlashCards.Core.Entities.Deck", "Deck")

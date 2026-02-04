@@ -10,7 +10,7 @@ namespace FlashCards.Core.Entities
         public string FrontText { get; set; } //The world to learn
         public string BackText { get; set; } //The definition of the word
         public Deck Deck { get; set; }
-        public Language Language { get; set; }
+        public CardLanguage Language { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public int ReviewCount { get; set; } = 0;
         public DateTime? NextReviewDate { get; set; }

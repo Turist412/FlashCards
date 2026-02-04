@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlashCards.Data.Migrations
 {
     [DbContext(typeof(FlashCardsDbContext))]
-    [Migration("20260129191955_InitialCreate")]
+    [Migration("20260204181038_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -97,6 +97,28 @@ namespace FlashCards.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Decks");
+                });
+
+            modelBuilder.Entity("FlashCards.Core.Entities.DictionaryWord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int?>("Gender")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Language")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Text")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("DictionaryWords");
                 });
 
             modelBuilder.Entity("FlashCards.Core.Entities.Card", b =>

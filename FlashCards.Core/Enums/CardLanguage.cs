@@ -1,10 +1,10 @@
 ﻿namespace FlashCards.Core.Enums
 {
-    public enum Language
+    public enum CardLanguage
     {
         German = 1,
         Japanese = 2,
-        //English = 3
+        Russian = 99,
     }
 
 }

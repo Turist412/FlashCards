@@ -8,7 +8,7 @@ namespace FlashCards.Business.DTOs
         public Guid DeckId { get; set; }
         public string FrontText { get; set; }
         public string BackText { get; set; }
-        public Language? Language { get; set; }
+        public CardLanguage? Language { get; set; }
         public DateTime CreatedAt { get; set; }
         public int ReviewCount { get; set; }
         public DateTime? NextReviewDate { get; set; }

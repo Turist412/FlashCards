@@ -26,6 +26,20 @@ namespace FlashCards.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "DictionaryWords",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Text = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Language = table.Column<int>(type: "int", nullable: false),
+                    Gender = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DictionaryWords", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Cards",
                 columns: table => new
                 {
@@ -68,6 +82,9 @@ namespace FlashCards.Data.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Cards");
+
+            migrationBuilder.DropTable(
+                name: "DictionaryWords");
 
             migrationBuilder.DropTable(
                 name: "Decks");

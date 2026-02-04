@@ -1,0 +1,56 @@
+<div class="study-page-container">
+
+  <div *ngIf="isLoading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Подбираем слова...</p>
+  </div>
+
+  <div *ngIf="!isLoading && !isFinished && cards.length > 0" class="active-session">
+    
+    <div class="session-header">
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progressPercent"></div>
+      </div>
+      <div class="counter">{{ currentIndex + 1 }} / {{ cards.length }}</div>
+      <button class="close-btn" routerLink="/" title="Выйти">✕</button>
+    </div>
+
+    <div class="card-wrapper" [ngSwitch]="currentCard.questionType">
+      
+      <app-multiple-choice
+        *ngSwitchCase="eQuestionType.MultipleChoice"
+        [card]="currentCard"
+        (answerGiven)="handleAnswer($event)">
+      </app-multiple-choice>
+
+      <app-true-false
+        *ngSwitchCase="eQuestionType.TrueFalse"
+        [card]="currentCard"
+        (answerGiven)="handleAnswer($event)">
+      </app-true-false>
+
+      <div *ngSwitchCase="eQuestionType.FillInTheBlank" class="temp-placeholder">
+         <h3>Введите слово</h3>
+         <p>Этот тип теста пока в разработке</p>
+         <button (click)="handleAnswer(true)">Пропустить (Я знал)</button>
+      </div>
+
+    </div>
+  </div>
+
+  <div *ngIf="isFinished" class="finished-state">
+    <div class="finish-content">
+      <h1>🎉</h1>
+      <h2>Сессия завершена!</h2>
+      
+      <p *ngIf="cards.length > 0">Вы повторили {{ cards.length }} слов.</p>
+      <p *ngIf="cards.length === 0">Нет слов для повторения прямо сейчас.</p>
+      
+      <div class="actions">
+        <a routerLink="/" class="btn-primary">В меню</a>
+        <button *ngIf="cards.length > 0" (click)="startSession()" class="btn-secondary">Еще раз</button>
+      </div>
+    </div>
+  </div>
+
+</div>
