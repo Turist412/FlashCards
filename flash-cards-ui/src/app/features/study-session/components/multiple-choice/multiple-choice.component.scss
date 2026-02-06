@@ -1,0 +1,104 @@
+// 1. Контейнер (Копия mc-container)
+.tf-container {
+  text-align: center;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+// 2. Блок сравнения (Стилизован, чтобы сочетаться с вопросом)
+.comparison-block {
+  margin-bottom: 20px;
+}
+
+// Заголовок вопроса (Копия .question)
+.question {
+  font-size: 2rem;
+  margin: 0;
+  color: #333;
+}
+
+// Стрелочка между словами
+.connector {
+  margin: 10px 0;
+  font-size: 1.5rem;
+  color: #888;
+}
+
+// Предлагаемое слово (Делаем его похожим на hover-эффект кнопок, чтобы выделить)
+.proposed-word {
+  font-size: 2rem;
+  margin: 0;
+  color: #2196f3; // Акцентный синий цвет
+  font-weight: bold;
+}
+
+// 3. Подсказка (Копия .hint)
+.hint {
+  color: #888;
+  margin-bottom: 30px;
+}
+
+// 4. Сетка кнопок (Копия .options-grid)
+.options-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; // Две равные колонки
+  gap: 15px;
+}
+
+// 5. Кнопки (Полная копия .option-btn)
+.option-btn {
+  padding: 20px;
+  font-size: 1.2rem; // Чуть крупнее для Да/Нет
+  font-weight: bold;
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  
+  // Hover эффект (только если кнопка активна)
+  &:hover:not([disabled]) {
+    border-color: #2196f3;
+    background-color: #f0f8ff;
+    transform: translateY(-2px);
+  }
+
+  // СОСТОЯНИЯ ПОСЛЕ ОТВЕТА
+  
+  // Если пользователь выбрал этот вариант и он верный -> Зеленый
+  &.correct {
+    background-color: #4caf50 !important;
+    border-color: #4caf50 !important;
+    color: white;
+  }
+
+  // Если пользователь выбрал этот вариант и он неверный -> Красный
+  &.wrong {
+    background-color: #f44336 !important;
+    border-color: #f44336 !important;
+    color: white;
+  }
+
+  // Если кнопка не была выбрана -> Делаем бледной
+  &.faded {
+    opacity: 0.3;
+    transform: scale(0.95);
+    border-color: #eee;
+  }
+}
+
+// 6. Сообщение о результате
+.result-message {
+  margin-top: 25px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  animation: fadeIn 0.3s ease;
+  
+  &.success { color: #4caf50; }
+  &.error { color: #f44336; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}

@@ -1,10 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgModel } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router'; 
+import { ActivatedRoute, RouterLink, Router } from '@angular/router'; 
 import { CardService } from '../../services/card.service';
 import { Card, CreateCardDto } from '../../models/card.model';
 import { CardLanguage, GrammaticalGender } from '../../models/enums.model';
+import { QuestionType } from '../../models/enums.model';
+
 
 @Component({
   selector: 'app-card-list',
@@ -23,6 +25,10 @@ export class CardListComponent implements OnInit {
 
   isModalOpen = false;
 
+  showStudyModal = false;
+  selectedType: QuestionType = QuestionType.MultipleChoice;
+  eQuestionType = QuestionType;
+
   eLanguage = CardLanguage;
   eGender = GrammaticalGender;
 
@@ -34,7 +40,8 @@ export class CardListComponent implements OnInit {
   };
 
   constructor(private cardService: CardService,
-              private route: ActivatedRoute
+              private route: ActivatedRoute,
+              private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -144,5 +151,23 @@ export class CardListComponent implements OnInit {
       backText: '',
       language: this.currentCard.language 
     };
+  }
+
+  openStudySettings() {
+    this.showStudyModal = true;
+  }
+
+  closeStudySettings() {
+    this.showStudyModal = false;
+  }
+
+  startPractice() {
+    this.router.navigate(['/study', this.deckId], {
+      queryParams: { 
+        isSRS: false, 
+        type: this.selectedType 
+      }
+    });
+    this.closeStudySettings();
   }
 }

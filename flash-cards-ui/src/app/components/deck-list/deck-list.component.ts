@@ -3,7 +3,8 @@ import { CommonModule } from '@angular/common';
 import { DeckService } from '../../services/deck.service';
 import { Deck } from '../../models/deck.model';
 import { FormsModule } from '@angular/forms'; 
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
+import { QuestionType } from '../../models/enums.model';
 
 @Component({
   selector: 'app-deck-list',
@@ -16,11 +17,20 @@ export class DeckListComponent implements OnInit {
   decks: Deck[] = [];
   newDeckName = '';
 
-  constructor(private deckService: DeckService) {}
+  constructor(private deckService: DeckService, private router: Router) {}
 
   ngOnInit(): void {
     this.loadDecks();
   }
+
+  startGlobalReview() {
+  this.router.navigate(['/study'], { 
+    queryParams: { 
+      isSRS: true, 
+      type: QuestionType.MultipleChoice 
+    } 
+  });
+}
 
   loadDecks() {
     this.deckService.getAll().subscribe(data => {

@@ -10,8 +10,9 @@ namespace FlashCards.Business.Services
     public class StudyService : IStudyInterface
     {
         private readonly FlashCardsDbContext _context;
-        private readonly FakeUserContext _userContext;
-        StudyService(FlashCardsDbContext context, FakeUserContext userContext)
+        private readonly IUserContext _userContext;
+
+        public StudyService(FlashCardsDbContext context, IUserContext userContext)
         {
             _context = context;
             _userContext = userContext;
@@ -58,6 +59,11 @@ namespace FlashCards.Business.Services
                 query = query.Where(c => c.NextReviewDate <= DateTime.UtcNow)
                              .OrderBy(c => c.NextReviewDate)
                              .Take(20);
+            }
+            else
+            {
+                query = query.OrderBy(x => Guid.NewGuid())
+                             .Take(100);
             }
 
             var cards = await query.ToListAsync();
@@ -124,7 +130,7 @@ namespace FlashCards.Business.Services
                 resultDtos.Add(dto);
             }
 
-            return resultDtos;
+            return resultDtos.OrderBy(x => Guid.NewGuid()).ToList();
         }
 
         private async Task<List<string>> GenerateDistractorsSmartAsync(

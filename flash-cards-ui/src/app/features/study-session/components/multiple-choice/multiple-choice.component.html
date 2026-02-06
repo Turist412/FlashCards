@@ -1,1 +1,15 @@
-<p>multiple-choice works!</p>
+<div class="mc-container">
+  <h2 class="question">{{ questionText }}</h2>
+  <p class="hint">Выберите правильный вариант</p>
+
+  <div class="options-grid">
+    <button *ngFor="let option of card.possibleAnswers"
+            class="option-btn"
+            [class.correct]="isAnswerProcessed && isCorrectOption(option)"
+            [class.wrong]="isAnswerProcessed && selectedOption === option && !isCorrectOption(option)"
+            [disabled]="isAnswerProcessed"
+            (click)="onOptionClick(option)">
+      {{ option }}
+    </button>
+  </div>
+</div>

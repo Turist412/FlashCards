@@ -23,8 +23,9 @@ namespace FlashCards.Web
                 b => b.MigrationsAssembly("FlashCards.Data")));
 
             builder.Services.AddSingleton<IUserContext, FakeUserContext>();
-            builder.Services.AddTransient<IDeckService, DeckService>();
-            builder.Services.AddTransient<ICardService, CardService>();
+            builder.Services.AddScoped<IDeckService, DeckService>();
+            builder.Services.AddScoped<ICardService, CardService>();
+            builder.Services.AddScoped<IStudyInterface, StudyService>();
 
             builder.Services.AddOpenApi();
 
