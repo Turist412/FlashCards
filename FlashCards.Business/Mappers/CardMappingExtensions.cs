@@ -13,9 +13,11 @@ namespace FlashCards.Business.Mappers
                 BackText = createCardDto.BackText,
                 DeckId = createCardDto.DeckId,
                 Language = createCardDto.Language,
+                NextReviewDate = DateTime.UtcNow, 
                 Gender = createCardDto.Gender,
                 Plural = createCardDto.Plural,
                 Pronunciation = createCardDto.Pronunciation,
+
             };
         }
 

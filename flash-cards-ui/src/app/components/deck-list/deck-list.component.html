@@ -8,6 +8,7 @@
         [(ngModel)]="newDeckName" 
         (keyup.enter)="createDeck()" 
         placeholder="Название новой колоды...">
+
       <button (click)="createDeck()">
         <span class="plus-icon">+</span> Создать
       </button>
@@ -15,14 +16,15 @@
   </div>
 
   <div class="header-actions">
-  <h1>Мои Колоды</h1>
-  <div class="buttons-row">
-      <button class="srs-btn" (click)="startGlobalReview()">  
-          Учить просроченные          <!--Добавить счетчик просроченных слов-->
+      <button class="start-btn" (click)="startGlobalReview()">
+         
+          Учить просроченные слова
+          
+          <span class="badge" *ngIf="totalOverdueCards > 0">
+             {{'[' + totalOverdueCards + ']' }}
+          </span>
       </button>
-      
-      </div>
-</div>
+  </div>
 
   <div class="decks-grid">
     

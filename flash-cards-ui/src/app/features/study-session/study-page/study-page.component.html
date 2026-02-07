@@ -29,11 +29,11 @@
         (answerGiven)="handleAnswer($event)">
       </app-true-false>
       
-      <div *ngSwitchCase="eQuestionType.FillInTheBlank" class="temp-placeholder">
-         <h3>Введите слово</h3>
-         <p>Этот тип теста пока в разработке</p>
-         <button (click)="handleAnswer(true)">Пропустить (Я знал)</button>
-      </div>
+      <app-fill-blank
+        *ngSwitchCase="eQuestionType.FillInTheBlank"
+        [card]="currentCard"
+        (answerGiven)="handleAnswer($event)">
+      </app-fill-blank>
 
     </div>
   </div>

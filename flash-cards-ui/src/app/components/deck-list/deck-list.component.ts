@@ -16,7 +16,7 @@ import { QuestionType } from '../../models/enums.model';
 export class DeckListComponent implements OnInit {
   decks: Deck[] = [];
   newDeckName = '';
-
+  totalOverdueCards = 10; 
   constructor(private deckService: DeckService, private router: Router) {}
 
   ngOnInit(): void {

@@ -1,1 +1,37 @@
-<p>fill-blank works!</p>
+<div class="fb-container">
+  
+  <h2 class="question">{{ questionText }}</h2>
+  <p class="hint">Введите перевод</p>
+
+  <div class="input-area">
+    <input 
+      type="text" 
+      [(ngModel)]="userAnswer" 
+      (keyup.enter)="submitAnswer()"
+      [disabled]="isAnswerProcessed"
+      [class.correct-input]="isAnswerProcessed && isCorrect"
+      [class.wrong-input]="isAnswerProcessed && !isCorrect"
+      placeholder="Ваш ответ..."
+      autocomplete="off">
+    
+    <button 
+      class="check-btn" 
+      (click)="submitAnswer()"
+      [disabled]="isAnswerProcessed || !userAnswer.trim()">
+      Check
+    </button>
+  </div>
+
+  <div *ngIf="isAnswerProcessed" class="feedback-area">
+    
+    <div *ngIf="isCorrect" class="success-msg">
+      ✅ Правильно!
+    </div>
+
+    <div *ngIf="!isCorrect" class="error-msg">
+      ❌ Ошибка! <br>
+      Правильно: <span class="correct-text">{{ correctAnswer }}</span>
+    </div>
+
+  </div>
+</div>

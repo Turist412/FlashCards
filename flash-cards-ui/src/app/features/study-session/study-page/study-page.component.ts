@@ -28,6 +28,7 @@ export class StudyPageComponent implements OnInit {
   isLoading = true;
   isFinished = false;
 
+  isSRS = false;
   eQuestionType = QuestionType;
 
   constructor(
@@ -41,20 +42,23 @@ export class StudyPageComponent implements OnInit {
   }
 
   startSession() {
+    this.currentIndex = 0;
+    this.isFinished = false; 
+    this.cards = [];       
     this.isLoading = true;
 
     const deckId = this.route.snapshot.paramMap.get('id'); 
     
     const params = this.route.snapshot.queryParamMap;
     
-    const isSRS = params.get('isSRS') === 'true'; 
+    this.isSRS = params.get('isSRS') === 'true'; 
     
     const typeParam = params.get('type');
     const questionType = typeParam ? Number(typeParam) : QuestionType.MultipleChoice;
 
-    console.log(`Запуск сессии: Deck=${deckId}, Type=${questionType}, SRS=${isSRS}`);
+    console.log(`Запуск сессии: Deck=${deckId}, Type=${questionType}, SRS=${this.isSRS}`);
 
-    this.studyPageService.getCardsForStudySession(deckId, questionType, isSRS)
+    this.studyPageService.getCardsForStudySession(deckId, questionType, this.isSRS)
       .subscribe({
         next: (data) => {
           this.cards = data;
@@ -71,18 +75,19 @@ export class StudyPageComponent implements OnInit {
   handleAnswer(isCorrect: boolean) {
     if (this.currentIndex >= this.cards.length) return;
 
-    const currentCard = this.cards[this.currentIndex];
-
-    this.studyPageService.processStudyResult(currentCard.id, isCorrect).subscribe({
-        error: e => console.error('Ошибка сохранения прогресса', e)
-    });
+    if (this.isSRS) {
+        const currentCard = this.cards[this.currentIndex];
+        this.studyPageService.processStudyResult(currentCard.id, isCorrect).subscribe({
+            error: e => console.error('Ошибка сохранения прогресса', e)
+        });
+    }
 
     if (this.currentIndex < this.cards.length - 1) {
       this.currentIndex++;
     } else {
       this.isFinished = true;
     }
-  }
+}
 
   get currentCard(): StudyCard {
     return this.cards[this.currentIndex];

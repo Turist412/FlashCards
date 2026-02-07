@@ -20,6 +20,8 @@ namespace FlashCards.Business.Services
 
         public async Task<CardDTO> ProcessStudyResult(Guid cardId, bool isCorrect)
         {
+
+            Console.WriteLine($"Processing study result for cardId: {cardId}, isCorrect: {isCorrect}");
             var card = await _context.Cards
                 .FirstOrDefaultAsync(c => c.Id == cardId && c.UserId == _userContext.CurrentUserId);
 
@@ -46,6 +48,7 @@ namespace FlashCards.Business.Services
             QuestionType requestedType,
             bool isSRS)
         {
+            Console.WriteLine($"deckId: {deckId}, requestedType: {requestedType}, isSRS: {isSRS}");
             var query = _context.Cards
                 .Where(c => c.Deck.UserId == _userContext.CurrentUserId);
 
