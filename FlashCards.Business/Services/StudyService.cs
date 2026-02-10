@@ -11,11 +11,13 @@ namespace FlashCards.Business.Services
     {
         private readonly FlashCardsDbContext _context;
         private readonly IUserContext _userContext;
+        private readonly IStudyCoreService _studyCoreService;
 
-        public StudyService(FlashCardsDbContext context, IUserContext userContext)
+        public StudyService(FlashCardsDbContext context, IUserContext userContext, IStudyCoreService studyCoreService)
         {
             _context = context;
             _userContext = userContext;
+            _studyCoreService = studyCoreService;
         }
 
         public async Task<CardDTO> ProcessStudyResult(Guid cardId, bool isCorrect)
@@ -35,8 +37,7 @@ namespace FlashCards.Business.Services
             else
             {
                 card.ReviewCount += 1;
-                int intervalDays = GetIntervalDays(card.ReviewCount);
-                card.NextReviewDate = DateTime.UtcNow.AddDays(intervalDays);
+                card.NextReviewDate = _studyCoreService.CalculateNextReview(card.ReviewCount);
             }
             await _context.SaveChangesAsync();
 
@@ -77,7 +78,15 @@ namespace FlashCards.Business.Services
             {
                 var effectiveType = requestedType;
 
-                bool askFront = random.Next(0, 2) == 0;
+                bool askFront;
+                if (effectiveType == QuestionType.MultipleGrammarChoice)
+                {
+                    askFront = false;
+                }
+                else
+                {
+                    askFront = random.Next(0, 2) == 0;
+                }
 
                 var dto = new StudyCardDTO
                 {
@@ -97,7 +106,7 @@ namespace FlashCards.Business.Services
 
                 if (effectiveType == QuestionType.MultipleChoice)
                 {
-                    dto.PossibleAnswers = await GenerateDistractorsSmartAsync(
+                    dto.PossibleAnswers = await _studyCoreService.GenerateDistractorsAsync(
                         correctTarget,
                         card.Language,
                         askFront,
@@ -116,7 +125,7 @@ namespace FlashCards.Business.Services
                     }
                     else
                     {
-                        var fakeWords = await GenerateDistractorsSmartAsync(
+                        var fakeWords = await _studyCoreService.GenerateDistractorsAsync(
                             correctTarget,
                             card.Language,
                             askFront,
@@ -129,93 +138,21 @@ namespace FlashCards.Business.Services
                 {
                     dto.DisplayedBackText = null;
                 }
+                else if (effectiveType == QuestionType.MultipleGrammarChoice)
+                {
+                    dto.PossibleAnswers = _studyCoreService.GenerateSpellingDistractors(
+                        correctTarget,
+                        card.Language,
+                        3);
+
+                    dto.PossibleAnswers.Add(correctTarget);
+                    dto.PossibleAnswers = dto.PossibleAnswers.OrderBy(x => Guid.NewGuid()).ToList();
+                }
 
                 resultDtos.Add(dto);
             }
 
             return resultDtos.OrderBy(x => Guid.NewGuid()).ToList();
-        }
-
-        private async Task<List<string>> GenerateDistractorsSmartAsync(
-            string correctAnswer,
-            CardLanguage targetLanguage,
-            bool targetIsTranslation,  
-            int count)
-        {
-            List<string> distractors = new();
-
-            if (targetIsTranslation)
-            {
-                var dictWords = await _context.DictionaryWords
-                    .Where(w => w.Language == CardLanguage.Russian && w.Text != correctAnswer)
-                    .OrderBy(r => Guid.NewGuid())
-                    .Take(count)
-                    .Select(w => w.Text)
-                    .ToListAsync();
-
-                distractors.AddRange(dictWords);
-
-                if (distractors.Count < count)
-                {
-                    var needed = count - distractors.Count;
-
-                    var userWords = await _context.Cards
-                        .Where(c => c.Language == targetLanguage && c.BackText != correctAnswer)
-                        .OrderBy(r => Guid.NewGuid())
-                        .Take(needed)
-                        .Select(c => c.BackText) 
-                        .ToListAsync();
-
-                    distractors.AddRange(userWords);
-                }
-            }
-            else
-            {
-                var dictWords = await _context.DictionaryWords
-                    .Where(w => w.Language == targetLanguage && w.Text != correctAnswer)
-                    .OrderBy(r => Guid.NewGuid())
-                    .Take(count)
-                    .Select(w => w.Text)
-                    .ToListAsync();
-
-                distractors.AddRange(dictWords);
-
-                if (distractors.Count < count)
-                {
-                    var needed = count - distractors.Count;
-
-                    var userWords = await _context.Cards
-                        .Where(c => c.Language == targetLanguage && c.FrontText != correctAnswer)
-                        .OrderBy(r => Guid.NewGuid())
-                        .Take(needed)
-                        .Select(c => c.FrontText) 
-                        .ToListAsync();
-
-                    distractors.AddRange(userWords);
-                }
-            }
-
-            while (distractors.Count < count)
-            {
-                distractors.Add(targetIsTranslation ? "Нет данных" : "No Data");
-            }
-
-            return distractors;
-        }
-
-
-        private int GetIntervalDays(int level)
-        {
-            return level switch
-            {
-                1 => 1,    // Tomorrow
-                2 => 3,    // In 3 days
-                3 => 7,    // In a week
-                4 => 14,   // In 2 weeks
-                5 => 30,   // In a month
-                6 => 90,   // In 3 months
-                _ => 180   // In 6 months (for very old words)
-            };
         }
     }
 }

@@ -7,6 +7,7 @@ import { QuestionType } from '../../../models/enums.model';
 import { MultipleChoiceComponent } from '../components/multiple-choice/multiple-choice.component';
 import { TrueFalseComponent } from '../components/true-false/true-false.component';
 import { FillBlankComponent } from '../components/fill-blank/fill-blank.component'; 
+import { MultipleGrammarComponent } from '../components/multiple-grammar/multiple-grammar.component';
 
 @Component({
   selector: 'app-study-page',
@@ -16,7 +17,8 @@ import { FillBlankComponent } from '../components/fill-blank/fill-blank.componen
     RouterLink,
     MultipleChoiceComponent,
     TrueFalseComponent,
-    FillBlankComponent 
+    FillBlankComponent,
+    MultipleGrammarComponent 
   ],
   templateUrl: './study-page.component.html',
   styleUrl: './study-page.component.scss'

@@ -35,6 +35,12 @@
         (answerGiven)="handleAnswer($event)">
       </app-fill-blank>
 
+      <app-multiple-grammar
+        *ngSwitchCase="eQuestionType.MultipleGrammar"
+        [card]="currentCard"
+        (answerGiven)="handleAnswer($event)">
+      </app-multiple-grammar>
+
     </div>
   </div>
 

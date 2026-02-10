@@ -26,6 +26,7 @@ namespace FlashCards.Web
             builder.Services.AddScoped<IDeckService, DeckService>();
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<IStudyInterface, StudyService>();
+            builder.Services.AddScoped<IStudyCoreService, StudyCoreService>();
 
             builder.Services.AddOpenApi();
 
