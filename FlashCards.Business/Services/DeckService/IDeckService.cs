@@ -1,6 +1,6 @@
 ﻿using FlashCards.Business.DTOs;
 
-namespace FlashCards.Business.Interfaces
+namespace FlashCards.Business.Services.DeckService
 {
     public interface IDeckService
     {

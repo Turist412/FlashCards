@@ -1,6 +1,6 @@
 ﻿using FlashCards.Core.Enums;
 
-namespace FlashCards.Business.Interfaces
+namespace FlashCards.Business.BusinessServices.StudyCoreService
 {
     public interface IStudyCoreService
     {

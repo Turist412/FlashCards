@@ -1,6 +1,4 @@
-﻿using FlashCards.Business.Interfaces;
-
-namespace FlashCards.Business.Services
+﻿namespace FlashCards.Business.Services.UserContext
 {
     public class FakeUserContext : IUserContext
     {

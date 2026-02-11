@@ -1,10 +1,10 @@
 ﻿using FlashCards.Business.DTOs;
-using FlashCards.Business.Interfaces;
 using FlashCards.Business.Mappers;
+using FlashCards.Business.Services.UserContext;
 using FlashCards.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace FlashCards.Business.Services
+namespace FlashCards.Business.Services.DeckService
 {
     public class DeckService : IDeckService
     {

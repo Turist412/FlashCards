@@ -1,12 +1,11 @@
-﻿using FlashCards.Business.Interfaces;
-using FlashCards.Core.Enums;
+﻿using FlashCards.Core.Enums;
 using FlashCards.Data;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace FlashCards.Business.Services
+namespace FlashCards.Business.BusinessServices.StudyCoreService
 {
     public class StudyCoreService : IStudyCoreService
     {
@@ -204,7 +203,7 @@ namespace FlashCards.Business.Services
 
                     // Проверка: перед этой гласной не должно быть еще одной гласной (дифтонг/долгота)
                     // Например: "Boot" (oo - долгая), "Haus" (au - дифтонг). Там удваивать нельзя.
-                    bool precededByDiphthong = (i > 1 && vowels.Contains(char.ToLower(word[i - 2])));
+                    bool precededByDiphthong = i > 1 && vowels.Contains(char.ToLower(word[i - 2]));
 
                     if (precededByVowel && !precededByDiphthong)
                     {

@@ -1,10 +1,10 @@
 ﻿using FlashCards.Business.DTOs;
-using FlashCards.Business.Interfaces;
 using FlashCards.Core.Entities;
 using FlashCards.Data;
 using FlashCards.Business.Mappers;
 using Microsoft.EntityFrameworkCore;
-namespace FlashCards.Business.Services
+using FlashCards.Business.Services.UserContext;
+namespace FlashCards.Business.Services.CardService
 {
     public class CardService : ICardService
     {

@@ -1,5 +1,5 @@
 ﻿using FlashCards.Business.DTOs;
-using FlashCards.Business.Interfaces;
+using FlashCards.Business.Services.StudyService;
 using FlashCards.Core.Enums;
 using Microsoft.AspNetCore.Mvc;
 

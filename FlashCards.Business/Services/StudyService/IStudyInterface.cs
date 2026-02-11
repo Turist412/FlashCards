@@ -1,7 +1,7 @@
 ﻿using FlashCards.Business.DTOs;
 using FlashCards.Core.Enums;
 
-namespace FlashCards.Business.Interfaces
+namespace FlashCards.Business.Services.StudyService
 {
     public interface IStudyInterface
     {

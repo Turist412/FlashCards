@@ -3,6 +3,11 @@
   <div class="header-section">
     <h1>Мои Колоды</h1>
     
+
+    <button class="dev-tool-btn" (click)="openImportModal()" title="Инструменты разработчика">
+        ⚙️ Импорт слов
+    </button>
+
     <div class="create-bar">
       <input 
         [(ngModel)]="newDeckName" 
@@ -59,4 +64,47 @@
     <p>У вас пока нет ни одной колоды. Создайте первую!</p>
   </div>
 
+</div>
+
+<div class="modal-overlay" *ngIf="isImportModalOpen" (click)="closeImportModal()">
+  <div class="modal-window" (click)="$event.stopPropagation()">
+    
+    <div class="modal-header">
+      <h3>Загрузка словаря</h3>
+      <span class="close-icon" (click)="closeImportModal()">×</span>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Язык словаря:</label>
+        <select [(ngModel)]="selectedLanguage">
+          <option [ngValue]="eLanguage.German">🇩🇪 Немецкий</option>
+          <option [ngValue]="eLanguage.Japanese">🇯🇵 Японский</option>
+          <option [ngValue]="eLanguage.Russian">🇷🇺 Русский</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Файл (.txt):</label>
+        <input type="file" (change)="onFileSelected($event)" accept=".txt,.csv">
+      </div>
+
+      <div *ngIf="importMessage" 
+           class="status-msg" 
+           [class.success]="!importMessage.includes('Ошибка')"
+           [class.error]="importMessage.includes('Ошибка')">
+          {{ importMessage }}
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="cancel-btn" (click)="closeImportModal()">Отмена</button>
+      <button class="save-btn" 
+              (click)="uploadDictionary()" 
+              [disabled]="!selectedFile || isUploading">
+          {{ isUploading ? 'Загрузка...' : 'Загрузить' }}
+      </button>
+    </div>
+
+  </div>
 </div>

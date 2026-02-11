@@ -1,5 +1,5 @@
 ﻿using FlashCards.Business.DTOs;
-using FlashCards.Business.Interfaces;
+using FlashCards.Business.Services.DeckService;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlashCards.Web.Controllers

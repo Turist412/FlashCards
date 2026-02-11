@@ -1,11 +1,12 @@
-﻿using FlashCards.Business.DTOs;
-using FlashCards.Business.Interfaces;
+﻿using FlashCards.Business.BusinessServices.StudyCoreService;
+using FlashCards.Business.DTOs;
 using FlashCards.Business.Mappers;
+using FlashCards.Business.Services.UserContext;
 using FlashCards.Core.Enums;
 using FlashCards.Data;
 using Microsoft.EntityFrameworkCore;
 
-namespace FlashCards.Business.Services
+namespace FlashCards.Business.Services.StudyService
 {
     public class StudyService : IStudyInterface
     {

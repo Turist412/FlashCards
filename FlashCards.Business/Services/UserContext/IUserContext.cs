@@ -1,4 +1,4 @@
-﻿namespace FlashCards.Business.Interfaces
+﻿namespace FlashCards.Business.Services.UserContext
 {
     public interface IUserContext
     {

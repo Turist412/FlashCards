@@ -1,5 +1,9 @@
-using FlashCards.Business.Interfaces;
-using FlashCards.Business.Services;
+using FlashCards.Business.BusinessServices.ImportDictionaryWords;
+using FlashCards.Business.BusinessServices.StudyCoreService;
+using FlashCards.Business.Services.CardService;
+using FlashCards.Business.Services.DeckService;
+using FlashCards.Business.Services.StudyService;
+using FlashCards.Business.Services.UserContext;
 using FlashCards.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +31,7 @@ namespace FlashCards.Web
             builder.Services.AddScoped<ICardService, CardService>();
             builder.Services.AddScoped<IStudyInterface, StudyService>();
             builder.Services.AddScoped<IStudyCoreService, StudyCoreService>();
+            builder.Services.AddScoped<IImportDictionaryWordsService, ImportDictionaryWordsService>();
 
             builder.Services.AddOpenApi();
 
