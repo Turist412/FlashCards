@@ -6,7 +6,7 @@ import { CardService } from '../../services/card.service';
 import { Card, CreateCardDto } from '../../models/card.model';
 import { CardLanguage, GrammaticalGender } from '../../models/enums.model';
 import { QuestionType } from '../../models/enums.model';
-
+import { TtsService } from '../../services/tts.service';
 
 @Component({
   selector: 'app-card-list',
@@ -41,7 +41,8 @@ export class CardListComponent implements OnInit {
 
   constructor(private cardService: CardService,
               private route: ActivatedRoute,
-              private router: Router
+              private router: Router,
+              private ttsService: TtsService
   ) {}
 
   ngOnInit(): void {
@@ -51,6 +52,12 @@ export class CardListComponent implements OnInit {
     if(this.deckId){
       this.loadAllCards(this.deckId);
     }
+  }
+
+  playAudio(event: Event, text: string, language: CardLanguage) {
+    event.stopPropagation(); 
+    
+    this.ttsService.speak(text, language);
   }
 
   loadAllCards(deckId: string) {

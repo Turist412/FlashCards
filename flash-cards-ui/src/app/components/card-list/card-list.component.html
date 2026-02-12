@@ -34,6 +34,11 @@
             </div>
 
             <div class="card-actions">
+                <button 
+                  class="icon-btn speak-btn" 
+                  (click)="playAudio($event, card.frontText, card.language)"                  >
+                  🔊
+                </button>
                 <button (click)="startEdit(card, $event)" class="icon-btn">✏️</button>
                 <button (click)="deleteCard(card.id, $event)" class="icon-btn">🗑</button>
             </div>
@@ -45,6 +50,11 @@
             </div>
 
             <div class="card-actions">
+                <button 
+                class="icon-btn speak-btn" 
+                (click)="playAudio($event, card.backText, eLanguage.Russian)"                >
+                🔊
+                </button>
                 <button (click)="startEdit(card, $event)" class="icon-btn">✏️</button>
                 <button (click)="deleteCard(card.id, $event)" class="icon-btn">🗑</button>
             </div>
