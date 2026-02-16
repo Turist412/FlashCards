@@ -6,7 +6,7 @@ export interface StudyCard {
   frontText: string;
   backText: string;
   displayedBackText?: string;   
-  language?: CardLanguage;
+  language: CardLanguage;
   gender?: GrammaticalGender;
   plural?: string;           
   pronunciation?: string;  

@@ -5,6 +5,8 @@
           <a routerLink="/" class="back-btn">← Назад</a>
           <h2>Слова в колоде</h2>
 
+          <app-speed-control style="margin-left: 15px;"></app-speed-control>
+          
           <button class="start-btn" (click)="openStudySettings()" *ngIf="cards.length > 0">
              Тренировка
           </button>
@@ -123,6 +125,7 @@
                 <option [ngValue]="eQuestionType.TrueFalse">Правда / Ложь</option>
                 <option [ngValue]="eQuestionType.FillInTheBlank">Вписать слово</option>
                 <option [ngValue]="eQuestionType.MultipleGrammar">Грамматический тест</option>
+                <option [ngValue]="eQuestionType.VoiceMultipleChoice">Аудирование</option>
 
             </select>
 

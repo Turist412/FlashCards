@@ -41,6 +41,12 @@
         (answerGiven)="handleAnswer($event)">
       </app-multiple-grammar>
 
+      <app-voice-multiple-choice
+        *ngSwitchCase="eQuestionType.VoiceMultipleChoice"
+        [card]="currentCard"
+        (answerGiven)="handleAnswer($event)">
+      </app-voice-multiple-choice>
+
     </div>
   </div>
 

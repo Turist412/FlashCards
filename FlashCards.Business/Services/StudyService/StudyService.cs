@@ -80,7 +80,7 @@ namespace FlashCards.Business.Services.StudyService
                 var effectiveType = requestedType;
 
                 bool askFront;
-                if (effectiveType == QuestionType.MultipleGrammarChoice)
+                if (effectiveType == QuestionType.MultipleGrammarChoice || effectiveType == QuestionType.VoiceMultipleChoice)
                 {
                     askFront = false;
                 }
@@ -105,7 +105,7 @@ namespace FlashCards.Business.Services.StudyService
 
                 string correctTarget = askFront ? card.BackText : card.FrontText;
 
-                if (effectiveType == QuestionType.MultipleChoice)
+                if (effectiveType == QuestionType.MultipleChoice || effectiveType == QuestionType.VoiceMultipleChoice)
                 {
                     dto.PossibleAnswers = await _studyCoreService.GenerateDistractorsAsync(
                         correctTarget,

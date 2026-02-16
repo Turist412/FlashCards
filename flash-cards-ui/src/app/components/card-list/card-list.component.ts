@@ -7,11 +7,12 @@ import { Card, CreateCardDto } from '../../models/card.model';
 import { CardLanguage, GrammaticalGender } from '../../models/enums.model';
 import { QuestionType } from '../../models/enums.model';
 import { TtsService } from '../../services/tts.service';
+import { SpeedControlComponent } from '../../shared/components/speed-control/speed-control.component';
 
 @Component({
   selector: 'app-card-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, SpeedControlComponent],
   templateUrl: './card-list.component.html',
   styleUrl: './card-list.component.scss'
 })

@@ -8,6 +8,7 @@ import { MultipleChoiceComponent } from '../components/multiple-choice/multiple-
 import { TrueFalseComponent } from '../components/true-false/true-false.component';
 import { FillBlankComponent } from '../components/fill-blank/fill-blank.component'; 
 import { MultipleGrammarComponent } from '../components/multiple-grammar/multiple-grammar.component';
+import { VoiceMultipleChoiceComponent } from '../components/voice-multiple-choice/voice-multiple-choice.component';
 
 @Component({
   selector: 'app-study-page',
@@ -18,7 +19,8 @@ import { MultipleGrammarComponent } from '../components/multiple-grammar/multipl
     MultipleChoiceComponent,
     TrueFalseComponent,
     FillBlankComponent,
-    MultipleGrammarComponent 
+    MultipleGrammarComponent,
+    VoiceMultipleChoiceComponent 
   ],
   templateUrl: './study-page.component.html',
   styleUrl: './study-page.component.scss'

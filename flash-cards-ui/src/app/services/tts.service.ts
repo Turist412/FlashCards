@@ -6,12 +6,27 @@ export class TtsService {
   private synthesis = window.speechSynthesis;
   private voices: SpeechSynthesisVoice[] = [];
 
+  private _rate: number = 1.0;
+
   constructor() {
     this.loadVoices();
 
     if (window.speechSynthesis.onvoiceschanged !== undefined) {
       window.speechSynthesis.onvoiceschanged = () => this.loadVoices();
     }
+
+    const savedRate = localStorage.getItem('tts-rate');
+    if (savedRate) {
+      this._rate = parseFloat(savedRate);
+    }
+  }
+  get rate(): number {
+    return this._rate;
+  }
+
+  set rate(value: number) {
+    this._rate = value;
+    localStorage.setItem('tts-rate', value.toString()); 
   }
 
   private loadVoices() {
@@ -30,15 +45,15 @@ export class TtsService {
     switch (language) {
       case CardLanguage.German:
         utterance.lang = 'de-DE';
-        utterance.rate = 1.0;
+        utterance.rate = this._rate;
         break;
       case CardLanguage.Japanese:
         utterance.lang = 'ja-JP';
-        utterance.rate = 1.0;
+        utterance.rate = this._rate;
         break;
       case CardLanguage.Russian:
         utterance.lang = 'ru-RU';
-        utterance.rate = 1.0;
+        utterance.rate = this._rate;
         const dmitryVoice = this.voices.find(v => v.name.includes('Microsoft Dmitry Online (Natural)'));
         
         if (dmitryVoice) {
