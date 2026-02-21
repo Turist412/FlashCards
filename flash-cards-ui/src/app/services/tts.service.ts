@@ -42,14 +42,26 @@ export class TtsService {
 
     const utterance = new SpeechSynthesisUtterance(text);
 
+    const langId = Number(language);
+
     switch (language) {
       case CardLanguage.German:
         utterance.lang = 'de-DE';
         utterance.rate = this._rate;
+        const deVoice = this.voices.find(v => v.lang.includes('de') || v.name.includes('Deutsch') || v.name.includes('German'));
+        if (deVoice) {
+            utterance.voice = deVoice;
+        } else {
+            console.warn('Немецкий голос не найден, используется дефолтный');
+        }
+
         break;
       case CardLanguage.Japanese:
         utterance.lang = 'ja-JP';
         utterance.rate = this._rate;
+
+        const jpVoice = this.voices.find(v => v.lang.includes('ja') || v.name.includes('日本語') || v.name.includes('Japanese'));
+        if (jpVoice) utterance.voice = jpVoice;
         break;
       case CardLanguage.Russian:
         utterance.lang = 'ru-RU';

@@ -214,5 +214,80 @@ namespace FlashCards.Business.BusinessServices.StudyCoreService
             return results;
         }
 
+        public List<string> GenerateNumberDistractors(int correctNumber, CardLanguage language, int count = 3)
+        {
+            var fakes = new HashSet<int>();
+            var random = Random.Shared;
+
+            string correctStr = correctNumber.ToString();
+            if (language == CardLanguage.German && correctNumber >= 13 && correctStr.Length >= 2)
+            {
+                char units = correctStr[^1];
+                char tens = correctStr[^2];
+
+                if (units != tens)
+                {
+                    string swappedStr = correctStr[..^2] + units + tens;
+
+                    if (int.TryParse(swappedStr, out int swappedInt))
+                    {
+                        fakes.Add(swappedInt);
+                    }
+                }
+            }
+
+            int attempts = 0;
+            while (fakes.Count < count && attempts < 20)
+            {
+                char[] mutated = correctStr.ToCharArray();
+
+                int mutationsCount = random.Next(1, Math.Min(3, mutated.Length + 1));
+
+                for (int i = 0; i < mutationsCount; i++)
+                {
+                    int idx = random.Next(0, mutated.Length);
+                    char newDigit = (char)('0' + random.Next(0, 10));
+
+                    if (idx == 0 && mutated.Length > 1 && newDigit == '0')
+                    {
+                        newDigit = (char)('1' + random.Next(0, 9));
+                    }
+
+                    mutated[idx] = newDigit;
+                }
+
+                string mutatedStr = new string(mutated);
+                if (int.TryParse(mutatedStr, out int mutatedInt) && mutatedInt != correctNumber)
+                {
+                    fakes.Add(mutatedInt);
+                }
+
+                attempts++;
+            }
+
+            
+            int[] roundNumbers = { 10, 20, 50, 100, 500, 1000, 10000, 100000, 1000000 };
+
+            while (fakes.Count < count)
+            {
+                int fake;
+                if (correctNumber < 10 || random.Next(0, 3) == 0)
+                {
+                    fake = random.Next(1, 10);
+                }
+                else
+                {
+                    fake = roundNumbers[random.Next(roundNumbers.Length)];
+                }
+
+                if (fake != correctNumber)
+                {
+                    fakes.Add(fake);
+                }
+            }
+
+            return fakes.Take(count).Select(f => f.ToString()).ToList();
+        }
+
     }
 }

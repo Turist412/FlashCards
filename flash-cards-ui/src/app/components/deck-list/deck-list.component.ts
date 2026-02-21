@@ -25,6 +25,13 @@ export class DeckListComponent implements OnInit {
   importMessage = '';
   isUploading = false;
 
+  isNumbersModalOpen = false;
+  numMin = 1;
+  numMax = 1000;
+  numCount = 20;
+  numLanguage: CardLanguage = CardLanguage.German;
+  numIsAudioMode = true;
+
   eLanguage = CardLanguage;
   
   constructor(private deckService: DeckService, private router: Router, private importWordsService: ImportWordsService) {}
@@ -115,4 +122,30 @@ export class DeckListComponent implements OnInit {
         }
       });
   }
+
+  openNumbersModal() {
+    this.isNumbersModalOpen = true;
+  }
+
+  closeNumbersModal() {
+    this.isNumbersModalOpen = false;
+  }
+
+  startNumbersSession() {
+    if (this.numMin >= this.numMax || this.numCount <= 0) return;
+
+    this.closeNumbersModal();
+
+    this.router.navigate(['/study'], {
+      queryParams: {
+        mode: 'numbers', 
+        min: this.numMin,
+        max: this.numMax,
+        count: this.numCount,
+        lang: this.numLanguage,
+        audio: this.numIsAudioMode
+      }
+    });
+  }
+
 }

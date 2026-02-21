@@ -51,30 +51,59 @@ export class StudyPageComponent implements OnInit {
     this.cards = [];       
     this.isLoading = true;
 
-    const deckId = this.route.snapshot.paramMap.get('id'); 
-    
-    const params = this.route.snapshot.queryParamMap;
-    
-    this.isSRS = params.get('isSRS') === 'true'; 
-    
-    const typeParam = params.get('type');
-    const questionType = typeParam ? Number(typeParam) : QuestionType.MultipleChoice;
+    // Считываем параметры из URL
+    const queryParams = this.route.snapshot.queryParamMap;
+    const mode = queryParams.get('mode');
 
-    console.log(`Запуск сессии: Deck=${deckId}, Type=${questionType}, SRS=${this.isSRS}`);
+    // ПРОВЕРЯЕМ РЕЖИМ: Если это тренажер чисел
+    if (mode === 'numbers') {
+        this.isSRS = false; // Для чисел прогресс не сохраняем!
 
-    this.studyPageService.getCardsForStudySession(deckId, questionType, this.isSRS)
-      .subscribe({
-        next: (data) => {
-          this.cards = data;
-          this.isLoading = false;
-          if (this.cards.length === 0) this.isFinished = true;
-        },
-        error: (err) => {
-          console.error(err);
-          this.isLoading = false;
-        }
-      });
-}
+        // Достаем параметры и конвертируем их в нужные типы
+        const min = Number(queryParams.get('min')) || 1;
+        const max = Number(queryParams.get('max')) || 1000;
+        const count = Number(queryParams.get('count')) || 20;
+        const lang = Number(queryParams.get('lang')); 
+        const isAudioMode = queryParams.get('audio') === 'true';
+
+        console.log(`Запуск тренажера чисел: Min=${min}, Max=${max}, Count=${count}, Lang=${lang}, Audio=${isAudioMode}`);
+
+        // ВЫЗЫВАЕМ НОВЫЙ МЕТОД СЕРВИСА
+        this.studyPageService.getNumbersStudySession(min, max, count, lang, isAudioMode)
+          .subscribe({
+            next: (data) => this.handleDataSuccess(data),
+            error: (err) => this.handleDataError(err)
+          });
+    } 
+    // ИНАЧЕ: Обычная тренировка по колоде
+    else {
+        const deckId = this.route.snapshot.paramMap.get('id'); 
+        this.isSRS = queryParams.get('isSRS') === 'true'; 
+        
+        const typeParam = queryParams.get('type');
+        const questionType = typeParam ? Number(typeParam) : QuestionType.MultipleChoice;
+
+        console.log(`Запуск сессии: Deck=${deckId}, Type=${questionType}, SRS=${this.isSRS}`);
+
+        // ВЫЗЫВАЕМ СТАРЫЙ МЕТОД СЕРВИСА
+        this.studyPageService.getCardsForStudySession(deckId, questionType, this.isSRS)
+          .subscribe({
+            next: (data) => this.handleDataSuccess(data),
+            error: (err) => this.handleDataError(err)
+          });
+    }
+  }
+
+  private handleDataSuccess(data: StudyCard[]) {
+      this.cards = data;
+      this.isLoading = false;
+      if (this.cards.length === 0) this.isFinished = true;
+  }
+
+  private handleDataError(err: any) {
+      console.error('Ошибка загрузки карточек:', err);
+      this.isLoading = false;
+  }
 
   handleAnswer(isCorrect: boolean) {
     if (this.currentIndex >= this.cards.length) return;

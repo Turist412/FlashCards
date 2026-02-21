@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { QuestionType } from '../models/enums.model';
+import { CardLanguage, QuestionType } from '../models/enums.model';
 import { StudyCard } from '../models/study-card.model';
 
 @Injectable({
@@ -21,6 +21,17 @@ export class StudyPageService {
         params = params.set('deckId', deckId);
     }
     return this.http.get<StudyCard[]>(this.apiUrl, { params });
+  }
+
+  getNumbersStudySession(min: number, max: number, count: number, language: CardLanguage, isAudioMode: boolean): Observable<StudyCard[]> {
+    const params = new HttpParams()
+        .set('min', min.toString())
+        .set('max', max.toString())
+        .set('count', count.toString())
+        .set('language', language.toString())
+        .set('isAudioMode', isAudioMode.toString());
+    
+    return this.http.get<StudyCard[]>(`${this.apiUrl}/numbers-session`, { params });
   }
 
   processStudyResult(cardId: string, isCorrect: boolean): Observable<any> {

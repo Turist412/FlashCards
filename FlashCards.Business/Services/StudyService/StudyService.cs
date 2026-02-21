@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FlashCards.Business.Services.StudyService
 {
-    public class StudyService : IStudyInterface
+    public class StudyService : IStudyService
     {
         private readonly FlashCardsDbContext _context;
         private readonly IUserContext _userContext;
@@ -154,6 +154,40 @@ namespace FlashCards.Business.Services.StudyService
             }
 
             return resultDtos.OrderBy(x => Guid.NewGuid()).ToList();
+        }
+
+        public ICollection<StudyCardDTO> GenerateNumberSession(
+            int min, int max, int count, CardLanguage language, bool isAudioMode)
+        {
+            var resultDtos = new List<StudyCardDTO>();
+            var random = Random.Shared;
+
+            for (int i = 0; i < count; i++)
+            {
+                int correctNum = random.Next(min, max + 1);
+
+                var effectiveType = isAudioMode
+                    ? QuestionType.VoiceMultipleChoice
+                    : QuestionType.MultipleChoice;
+
+                var dto = new StudyCardDTO
+                {
+                    Id = Guid.NewGuid(), 
+                    Language = language,
+                    QuestionType = effectiveType,
+                    FrontText = correctNum.ToString(),
+                    BackText = correctNum.ToString(),  
+                    CheckFrontText = true 
+                };
+
+                dto.PossibleAnswers = _studyCoreService.GenerateNumberDistractors(correctNum, language, 3);
+                dto.PossibleAnswers.Add(correctNum.ToString());
+                dto.PossibleAnswers = dto.PossibleAnswers.OrderBy(x => Guid.NewGuid()).ToList();
+
+                resultDtos.Add(dto);
+            }
+
+            return resultDtos;
         }
     }
 }

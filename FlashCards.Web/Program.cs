@@ -29,7 +29,7 @@ namespace FlashCards.Web
             builder.Services.AddSingleton<IUserContext, FakeUserContext>();
             builder.Services.AddScoped<IDeckService, DeckService>();
             builder.Services.AddScoped<ICardService, CardService>();
-            builder.Services.AddScoped<IStudyInterface, StudyService>();
+            builder.Services.AddScoped<IStudyService, StudyService>();
             builder.Services.AddScoped<IStudyCoreService, StudyCoreService>();
             builder.Services.AddScoped<IImportDictionaryWordsService, ImportDictionaryWordsService>();
 
