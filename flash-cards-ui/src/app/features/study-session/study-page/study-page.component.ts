@@ -35,11 +35,21 @@ export class StudyPageComponent implements OnInit {
   isSRS = false;
   eQuestionType = QuestionType;
 
+  answerHistory: (boolean | undefined)[] = [];
+
   constructor(
     private studyPageService: StudyPageService,
     private route: ActivatedRoute,
     private router: Router
   ) {}
+
+  get correctAnswersCount(): number {
+    return this.answerHistory.filter(result => result === true).length;
+  }
+
+  get incorrectAnswersCount(): number {
+    return this.answerHistory.filter(result => result === false).length;
+  }
 
   ngOnInit(): void {
     this.startSession();
@@ -51,15 +61,12 @@ export class StudyPageComponent implements OnInit {
     this.cards = [];       
     this.isLoading = true;
 
-    // Считываем параметры из URL
     const queryParams = this.route.snapshot.queryParamMap;
     const mode = queryParams.get('mode');
 
-    // ПРОВЕРЯЕМ РЕЖИМ: Если это тренажер чисел
     if (mode === 'numbers') {
-        this.isSRS = false; // Для чисел прогресс не сохраняем!
+        this.isSRS = false; 
 
-        // Достаем параметры и конвертируем их в нужные типы
         const min = Number(queryParams.get('min')) || 1;
         const max = Number(queryParams.get('max')) || 1000;
         const count = Number(queryParams.get('count')) || 20;
@@ -68,14 +75,12 @@ export class StudyPageComponent implements OnInit {
 
         console.log(`Запуск тренажера чисел: Min=${min}, Max=${max}, Count=${count}, Lang=${lang}, Audio=${isAudioMode}`);
 
-        // ВЫЗЫВАЕМ НОВЫЙ МЕТОД СЕРВИСА
         this.studyPageService.getNumbersStudySession(min, max, count, lang, isAudioMode)
           .subscribe({
             next: (data) => this.handleDataSuccess(data),
             error: (err) => this.handleDataError(err)
           });
     } 
-    // ИНАЧЕ: Обычная тренировка по колоде
     else {
         const deckId = this.route.snapshot.paramMap.get('id'); 
         this.isSRS = queryParams.get('isSRS') === 'true'; 
@@ -85,7 +90,6 @@ export class StudyPageComponent implements OnInit {
 
         console.log(`Запуск сессии: Deck=${deckId}, Type=${questionType}, SRS=${this.isSRS}`);
 
-        // ВЫЗЫВАЕМ СТАРЫЙ МЕТОД СЕРВИСА
         this.studyPageService.getCardsForStudySession(deckId, questionType, this.isSRS)
           .subscribe({
             next: (data) => this.handleDataSuccess(data),
@@ -96,6 +100,7 @@ export class StudyPageComponent implements OnInit {
 
   private handleDataSuccess(data: StudyCard[]) {
       this.cards = data;
+      this.answerHistory = new Array(this.cards.length).fill(undefined);
       this.isLoading = false;
       if (this.cards.length === 0) this.isFinished = true;
   }
@@ -107,6 +112,8 @@ export class StudyPageComponent implements OnInit {
 
   handleAnswer(isCorrect: boolean) {
     if (this.currentIndex >= this.cards.length) return;
+
+    this.answerHistory[this.currentIndex] = isCorrect;
 
     if (this.isSRS) {
         const currentCard = this.cards[this.currentIndex];
@@ -122,12 +129,41 @@ export class StudyPageComponent implements OnInit {
     }
 }
 
-  get currentCard(): StudyCard {
-    return this.cards[this.currentIndex];
+  private shuffleArray(array: string[]): string[] {
+    const newArray = [...array];
+    for (let i = newArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+    }
+    return newArray;
   }
 
-  get progressPercent(): number {
-    if (!this.cards.length) return 0;
-    return ((this.currentIndex) / this.cards.length) * 100;
+retryIncorrect() {
+    const incorrectCards = this.cards.filter((_, index) => this.answerHistory[index] === false);
+    
+    if (incorrectCards.length > 0) {
+      this.isSRS = false; 
+
+      this.cards = incorrectCards.map(card => {
+        const clonedCard = { ...card };
+        
+        if (clonedCard.possibleAnswers && clonedCard.possibleAnswers.length > 0) {
+           clonedCard.possibleAnswers = this.shuffleArray(clonedCard.possibleAnswers);
+        }
+        
+        // Опционально: можно инвертировать вопрос (спрашивать перевод вместо оригинала)
+        // clonedCard.checkFrontText = !clonedCard.checkFrontText;
+
+        return clonedCard;
+      });
+      
+      this.answerHistory = new Array(this.cards.length).fill(undefined);
+      this.currentIndex = 0;
+      this.isFinished = false;
+    }
+  }
+
+  get currentCard(): StudyCard {
+    return this.cards[this.currentIndex];
   }
 }

@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Deck, CreateDeckDto } from '../models/deck.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DeckService {
 
-  private apiUrl = 'https://localhost:7112/api/decks'; 
+  private apiUrl = `${environment.apiUrl}/decks`;
 
   constructor(private http: HttpClient) { }
 

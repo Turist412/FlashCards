@@ -1,67 +1,108 @@
-<div class="study-page-container">
+<div class="container py-4 study-page-container">
 
-  <div *ngIf="isLoading" class="loading-state">
-    <div class="spinner"></div>
-    <p>Подбираем слова...</p>
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Загрузка...</span>
+    </div>
+    <p class="mt-3 text-muted">Подбираем слова...</p>
   </div>
 
   <div *ngIf="!isLoading && !isFinished && cards.length > 0" class="active-session">
     
-    <div class="session-header">
-      <div class="progress-track">
-        <div class="progress-fill" [style.width.%]="progressPercent"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      
+      <div class="d-flex flex-grow-1 gap-1 me-3">
+        <div *ngFor="let card of cards; let i = index" 
+             class="progress flex-grow-1" style="height: 8px;">
+          <div class="progress-bar"
+               [ngClass]="{
+                 'bg-success': answerHistory[i] === true,
+                 'bg-danger': answerHistory[i] === false,
+                 'bg-primary progress-bar-striped progress-bar-animated': answerHistory[i] === undefined && i === currentIndex,
+                 'bg-secondary opacity-25': answerHistory[i] === undefined && i !== currentIndex
+               }"
+               style="width: 100%">
+          </div>
+        </div>
       </div>
-      <div class="counter">{{ currentIndex + 1 }} / {{ cards.length }}</div>
-      <button class="close-btn" routerLink="/" title="Выйти">✕</button>
+
+      <div class="text-nowrap fw-bold me-3 text-muted">
+        {{ currentIndex + 1 }} / {{ cards.length }}
+      </div>
+      
+      <button class="btn-close" routerLink="/" aria-label="Выйти" title="Выйти"></button>
     </div>
 
-    <div class="card-wrapper" [ngSwitch]="currentCard.questionType">
-      
-      <app-multiple-choice
-        *ngSwitchCase="eQuestionType.MultipleChoice"
-        [card]="currentCard"
-        (answerGiven)="handleAnswer($event)">
-      </app-multiple-choice>
+    <div class="card shadow-sm border-0">
+      <div class="card-body p-4" [ngSwitch]="currentCard.questionType">
+        
+        <app-multiple-choice
+          *ngSwitchCase="eQuestionType.MultipleChoice"
+          [card]="currentCard"
+          (answerGiven)="handleAnswer($event)">
+        </app-multiple-choice>
 
-      <app-true-false
-        *ngSwitchCase="eQuestionType.TrueFalse"
-        [card]="currentCard"
-        (answerGiven)="handleAnswer($event)">
-      </app-true-false>
-      
-      <app-fill-blank
-        *ngSwitchCase="eQuestionType.FillInTheBlank"
-        [card]="currentCard"
-        (answerGiven)="handleAnswer($event)">
-      </app-fill-blank>
+        <app-true-false
+          *ngSwitchCase="eQuestionType.TrueFalse"
+          [card]="currentCard"
+          (answerGiven)="handleAnswer($event)">
+        </app-true-false>
+        
+        <app-fill-blank
+          *ngSwitchCase="eQuestionType.FillInTheBlank"
+          [card]="currentCard"
+          (answerGiven)="handleAnswer($event)">
+        </app-fill-blank>
 
-      <app-multiple-grammar
-        *ngSwitchCase="eQuestionType.MultipleGrammar"
-        [card]="currentCard"
-        (answerGiven)="handleAnswer($event)">
-      </app-multiple-grammar>
+        <app-multiple-grammar
+          *ngSwitchCase="eQuestionType.MultipleGrammar"
+          [card]="currentCard"
+          (answerGiven)="handleAnswer($event)">
+        </app-multiple-grammar>
 
-      <app-voice-multiple-choice
-        *ngSwitchCase="eQuestionType.VoiceMultipleChoice"
-        [card]="currentCard"
-        (answerGiven)="handleAnswer($event)">
-      </app-voice-multiple-choice>
+        <app-voice-multiple-choice
+          *ngSwitchCase="eQuestionType.VoiceMultipleChoice"
+          [card]="currentCard"
+          (answerGiven)="handleAnswer($event)">
+        </app-voice-multiple-choice>
 
+      </div>
     </div>
   </div>
 
-  <div *ngIf="isFinished" class="finished-state">
-    <div class="finish-content">
-      <h1>🎉</h1>
-      <h2>Сессия завершена!</h2>
-      
-      <p *ngIf="cards.length > 0">Вы повторили {{ cards.length }} слов.</p>
-      <p *ngIf="cards.length === 0">Нет слов для повторения прямо сейчас.</p>
-      
-      <div class="actions">
-        <a routerLink="/" class="btn-primary">В меню</a>
-        <button *ngIf="cards.length > 0" (click)="startSession()" class="btn-secondary">Еще раз</button>
+  <div *ngIf="isFinished" class="text-center py-5">
+    <h1 class="display-1 mb-3">🎉</h1>
+    <h2 class="mb-4">Сессия завершена!</h2>
+    
+    <div *ngIf="cards.length > 0" class="row justify-content-center mb-4">
+      <div class="col-md-6 col-lg-4">
+        <ul class="list-group text-start shadow-sm">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Всего слов
+            <span class="badge bg-primary rounded-pill">{{ cards.length }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Правильно
+            <span class="badge bg-success rounded-pill">{{ correctAnswersCount }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Ошибок
+            <span class="badge bg-danger rounded-pill">{{ incorrectAnswersCount }}</span>
+          </li>
+        </ul>
       </div>
+    </div>
+    
+    <p *ngIf="cards.length === 0" class="text-muted">Нет слов для повторения прямо сейчас.</p>
+    
+    <div class="d-flex justify-content-center gap-2 flex-wrap">
+      <a routerLink="/" class="btn btn-outline-secondary">В меню</a>
+      <button *ngIf="cards.length > 0" (click)="startSession()" class="btn btn-primary">
+        Начать заново
+      </button>
+      <button *ngIf="incorrectAnswersCount > 0" (click)="retryIncorrect()" class="btn btn-warning">
+        Повторить ошибки ({{ incorrectAnswersCount }})
+      </button>
     </div>
   </div>
 

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CardLanguage } from '../models/enums.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ImportWordsService {
-  private apiUrl = 'https://localhost:7112/api/importdictionarywords';
+  private apiUrl = `${environment.apiUrl}/importdictionarywords`;
 
   constructor(private http: HttpClient) {}
 

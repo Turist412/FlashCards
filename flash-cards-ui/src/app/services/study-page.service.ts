@@ -3,12 +3,13 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CardLanguage, QuestionType } from '../models/enums.model';
 import { StudyCard } from '../models/study-card.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class StudyPageService {       
-  private apiUrl = 'https://localhost:7112/api/study'; 
+  private apiUrl = `${environment.apiUrl}/study`; 
 
   constructor(private http: HttpClient) { }
 
