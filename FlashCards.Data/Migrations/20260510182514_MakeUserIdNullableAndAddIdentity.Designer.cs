@@ -4,6 +4,7 @@ using FlashCards.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlashCards.Data.Migrations
 {
     [DbContext(typeof(FlashCardsDbContext))]
-    partial class FlashCardsDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260510182514_MakeUserIdNullableAndAddIdentity")]
+    partial class MakeUserIdNullableAndAddIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -62,7 +65,7 @@ namespace FlashCards.Data.Migrations
                     b.Property<int>("ReviewCount")
                         .HasColumnType("int");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -90,7 +93,7 @@ namespace FlashCards.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<Guid?>("UserId")
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -333,8 +336,7 @@ namespace FlashCards.Data.Migrations
                     b.HasOne("FlashCards.Core.Entities.User", null)
                         .WithMany("Cards")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Deck");
                 });
@@ -344,8 +346,7 @@ namespace FlashCards.Data.Migrations
                     b.HasOne("FlashCards.Core.Entities.User", null)
                         .WithMany("Decks")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

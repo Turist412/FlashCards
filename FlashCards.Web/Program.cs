@@ -4,73 +4,100 @@ using FlashCards.Business.Services.CardService;
 using FlashCards.Business.Services.DeckService;
 using FlashCards.Business.Services.StudyService;
 using FlashCards.Business.Services.UserContext;
+using FlashCards.Core.Entities;
 using FlashCards.Data;
-using Microsoft.AspNetCore.Builder;
+using FlashCards.Web.Endpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
-namespace FlashCards.Web
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+builder.Services.AddDbContext<FlashCardsDbContext>(options =>
+    options.UseSqlServer(connectionString,
+    b => b.MigrationsAssembly("FlashCards.Data")));
+
+builder.Services.AddIdentity<User, IdentityRole<Guid>>(options =>
 {
-    public class Program
+    options.Password.RequireDigit = true;
+    options.Password.RequireLowercase = true;
+    options.Password.RequireUppercase = true;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 6;
+    options.User.RequireUniqueEmail = true;
+})
+.AddEntityFrameworkStores<FlashCardsDbContext>()
+.AddDefaultTokenProviders();
+
+var jwtSettings = builder.Configuration.GetSection("JwtSettings");
+var secretKey = jwtSettings["SecretKey"] ?? throw new InvalidOperationException("JWT SecretKey not configured");
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey))
+    };
+});
 
-            // Add services to the container.
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+builder.Services.AddAuthorization();
 
-
-            builder.Services.AddControllers();
-
-            builder.Services.AddDbContext<FlashCardsDbContext>(options =>
-                options.UseSqlServer(connectionString,
-                b => b.MigrationsAssembly("FlashCards.Data")));
-
-            builder.Services.AddSingleton<IUserContext, FakeUserContext>();
-            builder.Services.AddScoped<IDeckService, DeckService>();
-            builder.Services.AddScoped<ICardService, CardService>();
-            builder.Services.AddScoped<IStudyService, StudyService>();
-            builder.Services.AddScoped<IStudyCoreService, StudyCoreService>();
-            builder.Services.AddScoped<IImportDictionaryWordsService, ImportDictionaryWordsService>();
-
-            builder.Services.AddOpenApi();
-
-            builder.Services.AddCors(options =>
-            {
-                options.AddPolicy("AllowAngular", policy =>
-                {
-                    policy.WithOrigins("http://localhost:4200") // frontend URL
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
-                });
-            });
-
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
-
-            var app = builder.Build();
-
-            // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.MapOpenApi();
-            }
-
-            app.UseHttpsRedirection();
-
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            }
-
-            app.UseCors("AllowAngular");
-            app.UseAuthorization();
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<IUserContext, RealUserContext>();
+builder.Services.AddScoped<IDeckService, DeckService>();
+builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<IStudyService, StudyService>();
+builder.Services.AddScoped<IStudyCoreService, StudyCoreService>();
+builder.Services.AddScoped<IImportDictionaryWordsService, ImportDictionaryWordsService>();
 
 
-            app.MapControllers();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngular", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyMethod()
+              .AllowAnyHeader();
+    });
+});
 
-            app.Run();
-        }
-    }
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
+
+app.UseHttpsRedirection();
+
+app.UseCors("AllowAngular");
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapAuthEndpoints();
+app.MapCardsEndpoints();
+app.MapDecksEndpoints();
+app.MapStudyEndpoints();
+app.MapImportDictionaryWordsEndpoints();
+
+app.Run();

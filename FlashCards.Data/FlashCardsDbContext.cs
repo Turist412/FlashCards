@@ -1,9 +1,11 @@
 ﻿using FlashCards.Core.Entities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FlashCards.Data
 {
-    public class FlashCardsDbContext : DbContext
+    public class FlashCardsDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
     {
         public FlashCardsDbContext(DbContextOptions<FlashCardsDbContext> options) : base(options)
         {
@@ -15,6 +17,19 @@ namespace FlashCards.Data
         protected override void OnModelCreating(ModelBuilder mb)
         {
             base.OnModelCreating(mb);
+
+            mb.Entity<User>(entity =>
+            {
+                entity.HasMany(u => u.Cards)
+                    .WithOne()
+                    .HasForeignKey(c => c.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasMany(u => u.Decks)
+                    .WithOne()
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
             mb.Entity<Card>(entity =>
             {

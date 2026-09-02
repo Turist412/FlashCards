@@ -1,0 +1,129 @@
+### FlashCards API - Примеры запросов
+
+@baseUrl = https://localhost:7001
+@token = your-jwt-token-here
+
+### 1. Регистрация нового пользователя
+POST {{baseUrl}}/api/auth/register
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "Password123!",
+  "userName": "testuser"
+}
+
+### 2. Вход в систему
+POST {{baseUrl}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "password": "Password123!"
+}
+
+### 3. Получить все колоды (требуется авторизация)
+GET {{baseUrl}}/api/decks
+Authorization: Bearer {{token}}
+
+### 4. Создать новую колоду (требуется авторизация)
+POST {{baseUrl}}/api/decks
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Немецкие слова"
+}
+
+### 5. Получить колоду по ID (требуется авторизация)
+GET {{baseUrl}}/api/decks/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 6. Обновить колоду (требуется авторизация)
+PUT {{baseUrl}}/api/decks/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Немецкие слова - обновлено"
+}
+
+### 7. Удалить колоду (требуется авторизация)
+DELETE {{baseUrl}}/api/decks/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 8. Получить карточки колоды (требуется авторизация)
+GET {{baseUrl}}/api/cards?deckId=00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 9. Создать новую карточку (требуется авторизация)
+POST {{baseUrl}}/api/cards
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "deckId": "00000000-0000-0000-0000-000000000000",
+  "frontText": "der Apfel",
+  "backText": "яблоко",
+  "language": 0,
+  "gender": 0,
+  "plural": "die ?pfel",
+  "pronunciation": "ap-fel"
+}
+
+### 10. Получить карточку по ID (требуется авторизация)
+GET {{baseUrl}}/api/cards/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 11. Обновить карточку (требуется авторизация)
+PUT {{baseUrl}}/api/cards/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "deckId": "00000000-0000-0000-0000-000000000000",
+  "frontText": "der Apfel",
+  "backText": "яблоко (обновлено)",
+  "language": 0,
+  "gender": 0
+}
+
+### 12. Удалить карточку (требуется авторизация)
+DELETE {{baseUrl}}/api/cards/00000000-0000-0000-0000-000000000000
+Authorization: Bearer {{token}}
+
+### 13. Получить карточки для изучения (требуется авторизация)
+GET {{baseUrl}}/api/study?deckId=00000000-0000-0000-0000-000000000000&questionType=0&isSRS=false
+Authorization: Bearer {{token}}
+
+### 14. Отправить результат изучения (требуется авторизация)
+PUT {{baseUrl}}/api/study
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "cardId": "00000000-0000-0000-0000-000000000000",
+  "isCorrect": true
+}
+
+### 15. Получить сессию для изучения чисел (требуется авторизация)
+GET {{baseUrl}}/api/study/numbers-session?min=1&max=100&count=10&language=0&isAudioMode=false
+Authorization: Bearer {{token}}
+
+### 16. Загрузить слова из файла (требуется авторизация)
+POST {{baseUrl}}/api/importdictionarywords/upload-words
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="file"; filename="words.txt"
+Content-Type: text/plain
+
+слово1
+слово2
+слово3
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="language"
+
+0
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
