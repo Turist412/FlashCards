@@ -9,6 +9,7 @@ namespace FlashCards.Business.Mappers
         {
             return new Card
             {
+                Id = createCardDto.Id ?? Guid.NewGuid(),
                 FrontText = createCardDto.FrontText,
                 BackText = createCardDto.BackText,
                 DeckId = createCardDto.DeckId,

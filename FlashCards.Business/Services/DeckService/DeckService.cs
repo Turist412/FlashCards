@@ -18,6 +18,19 @@ namespace FlashCards.Business.Services.DeckService
         }
         public async Task<DeckDTO> CreateAsync(CreateDeckDTO createDeckDto)
         {
+
+            if (createDeckDto.Id.HasValue)
+            {
+                var existingDeck = await _context.Decks
+                    .AsNoTracking()
+                    .Include(d => d.Cards)
+                    .FirstOrDefaultAsync(d => d.Id == createDeckDto.Id.Value && d.UserId == _userContext.CurrentUserId);
+                if (existingDeck != null)
+                {
+                    return existingDeck.ToDeckDTO(); 
+                }
+            }
+
             var deck = createDeckDto.ToEntity();
 
             deck.UserId = _userContext.CurrentUserId;

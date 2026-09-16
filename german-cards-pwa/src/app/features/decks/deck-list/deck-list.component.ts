@@ -1,8 +1,10 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { AuthService } from '../../../core/auth/auth.service';
 import { DeckDto } from '../../../models/deck-dto';
 import { DeckService } from '../../../core/decks/deck.service';
+import { OfflineSyncService } from '../../../core/sync/offline-sync.service';
 
 @Component({
   selector: 'app-deck-list',
@@ -15,6 +17,9 @@ import { DeckService } from '../../../core/decks/deck.service';
           <p class="mb-2 text-sm font-semibold uppercase tracking-widest text-teal-700">German Cards</p>
           <h1 class="text-4xl font-bold tracking-tight text-slate-950">Мои колоды</h1>
           <p class="mt-3 text-lg leading-7 text-slate-600">Выберите колоду, чтобы продолжить обучение.</p>
+          @if (!authService.isLoggedIn()) {
+            <div class="mt-5 flex gap-3"><a routerLink="/login" class="rounded-lg border border-teal-700 px-4 py-3 text-base font-semibold text-teal-800 hover:bg-teal-50">Войти</a><a routerLink="/register" class="rounded-lg bg-teal-700 px-4 py-3 text-base font-semibold text-white shadow-sm hover:bg-teal-800">Регистрация</a></div>
+          }
         </header>
 
         <form class="mb-8 flex gap-3" (submit)="createDeck($event)">
@@ -22,6 +27,7 @@ import { DeckService } from '../../../core/decks/deck.service';
           <input
             #deckName
             id="deck-name"
+            name="deck-name"
             class="min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-4 py-4 text-base shadow-sm outline-none transition placeholder:text-slate-400 focus:border-teal-600 focus:ring-4 focus:ring-teal-100"
             type="text"
             placeholder="Новая колода"
@@ -78,6 +84,8 @@ import { DeckService } from '../../../core/decks/deck.service';
 })
 export class DeckListComponent {
   private readonly deckService = inject(DeckService);
+  private readonly offlineSyncService = inject(OfflineSyncService);
+  readonly authService = inject(AuthService);
 
   readonly decks = signal<DeckDto[]>([]);
   readonly isLoading = signal(true);
@@ -100,7 +108,7 @@ export class DeckListComponent {
 
     this.isCreating.set(true);
     this.errorMessage.set('');
-    this.deckService.create({ name }).subscribe({
+    this.offlineSyncService.createDeck({ name }).subscribe({
       next: (deck) => {
         this.decks.update((decks) => [...decks, deck]);
         form.reset();

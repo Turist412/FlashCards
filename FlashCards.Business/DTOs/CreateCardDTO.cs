@@ -4,6 +4,7 @@ namespace FlashCards.Business.DTOs
 {
     public class CreateCardDTO
     {
+        public Guid? Id { get; set; }
         public string FrontText { get; set; }
         public string BackText { get; set; }
         public Guid DeckId { get; set; }

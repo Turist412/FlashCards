@@ -9,6 +9,7 @@ namespace FlashCards.Business.Mappers
         {
             return new Deck
             {
+                Id = createeckDTO.Id ?? Guid.NewGuid(),
                 Name = createeckDTO.Name,
             };
         }

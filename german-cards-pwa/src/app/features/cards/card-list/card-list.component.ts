@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { CardService } from '../../../core/cards/card.service';
+import { OfflineSyncService } from '../../../core/sync/offline-sync.service';
 import { CardDto } from '../../../models/card-dto';
 import { CardLanguage } from '../../../models/card-language';
 import { CreateCardDto } from '../../../models/create-card-dto';
@@ -120,6 +121,7 @@ import { GrammaticalGender } from '../../../models/grammatical-gender';
 })
 export class CardListComponent {
   private readonly cardService = inject(CardService);
+  private readonly offlineSyncService = inject(OfflineSyncService);
   private readonly route = inject(ActivatedRoute);
   private readonly deckId = this.route.snapshot.paramMap.get('deckId') ?? '';
 
@@ -175,7 +177,9 @@ export class CardListComponent {
     if (!card.frontText.trim() || !card.backText.trim() || this.isSaving()) return;
     this.isSaving.set(true);
     this.errorMessage.set('');
-    const request = this.editingCardId() ? this.cardService.update(this.editingCardId()!, card) : this.cardService.create(card);
+    const request = this.editingCardId()
+      ? this.cardService.update(this.editingCardId()!, card)
+      : this.offlineSyncService.createCard(card);
     request.subscribe({ next: (saved) => { this.cards.update((cards) => this.editingCardId() ? cards.map((card) => card.id === saved.id ? saved : card) : [...cards, saved]); this.closeModal(); }, error: () => { this.errorMessage.set('Не удалось сохранить карточку. Повторите попытку.'); this.isSaving.set(false); } });
   }
 

@@ -26,6 +26,18 @@ namespace FlashCards.Business.Services.CardService
                 throw new ArgumentException("Deck does not exist or does not belong to the current user.");
             }
 
+            if (createCardDto.Id.HasValue)
+            {
+                var existingCard = await _context.Cards
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(c => c.Id == createCardDto.Id.Value && c.UserId == _userContext.CurrentUserId);
+
+                if (existingCard != null)
+                {
+                    return existingCard.ToCardDTO(); 
+                }
+            }
+
             var card = createCardDto.ToEntity();
             card.UserId = _userContext.CurrentUserId;
 
